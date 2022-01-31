@@ -9,24 +9,23 @@ Welcome to your new app.
     <button @onclick=@(() => ShowFirstModal = true)>Show first Modal</button>
 </div>
 
-<Modal Visible=@ShowFirstModal CssClass="wide tall">
-    <h3>First modal</h3>
-    <button @onclick=@(() => ShowFirstModal = false)>Hide this Modal</button>
+<Modal Visible=@ShowFirstModal CssClass="wide tall" title="First modal">
     <button @onclick=@(() => ShowSecondModal = true)>Show second Modal</button>
+    <button @onclick=@(() => ShowFirstModal = false)>Hide this Modal</button>
 </Modal>
 
-<Modal Visible=@ShowSecondModal>
-    <button @onclick=@(() => ShowSecondModal = false)>Hide this Modal</button>
+<Modal Visible=@ShowSecondModal title="Second modal">
     <button @onclick=@(() => ShowThirdModal = true)>Show third Modal</button>
+    <button @onclick=@(() => ShowSecondModal = false)>Hide this Modal</button>
 </Modal>
 
-<Modal Visible=@ShowThirdModal CssClass="narrow short">
+<Modal Visible=@ShowThirdModal CssClass="narrow short" title="Third modal">
     <button @onclick=@(() => ShowThirdModal = false)>Hide this Modal</button>
 </Modal>
 
 @code
 {
-    bool ShowFirstModal = true;
-    bool ShowSecondModal = true;
-    bool ShowThirdModal = true;
+    bool ShowFirstModal;
+    bool ShowSecondModal;
+    bool ShowThirdModal;
 }
