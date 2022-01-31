@@ -1,0 +1,40 @@
+﻿.modal_screen-obscurer {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+	background-color: rgba(0,0,0,.2);
+	z-index: 10000;
+}
+
+.modal_container {
+	position: fixed;
+	top: 20vh;
+	left: 20vw;
+	width: 60vw;
+	height: 60vh;
+	background-color: white;
+	overflow: auto;
+	z-index: 10000;
+}
+
+	.modal_container.narrow {
+		left: 30vw;
+		width: 40vw;
+	}
+
+	.modal_container.wide {
+		left: 10vw;
+		width: 80vw;
+	}
+
+	.modal_container.short {
+		top: 30vh;
+		height: 40vh;
+	}
+
+	.modal_container.tall {
+		top: 10vh;
+		height: 80vh;
+	}
