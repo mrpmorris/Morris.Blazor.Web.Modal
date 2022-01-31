@@ -1,19 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <AssemblyOriginatorKeyFile>C:\Data\Mine\Code\Morris.Blazor.Web.Modal\Source\MrPMorris.snk</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<AssemblyOriginatorKeyFile>..\MrPMorris.snk</AssemblyOriginatorKeyFile>
+		<IsPackable>true</IsPackable>
+		<PackageId>Morris.Blazor.Web.Modal</PackageId>
+	</PropertyGroup>
 
 
-  <ItemGroup>
-    <SupportedPlatform Include="browser" />
-  </ItemGroup>
+	<ItemGroup>
+		<SupportedPlatform Include="browser" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.1" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.1" />
+	</ItemGroup>
 
 </Project>
