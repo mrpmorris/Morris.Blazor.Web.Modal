@@ -19,71 +19,74 @@ namespace Morris.Blazor.Web.Modal
 			RenderFragment? ownChildContent = ChildContent;
 			// <CascadingValue>
 			{
-				builder.OpenComponent<CascadingValue<ModalHost>>(4);
-				builder.AddAttribute(0, nameof(CascadingValue<ModalHost>.IsFixed), true);
-				builder.AddAttribute(1, nameof(CascadingValue<ModalHost>.Value), this);
-				builder.AddAttribute(2, nameof(CascadingValue<ModalHost>.ChildContent),
-					new RenderFragment(b =>
+				builder.OpenComponent<CascadingValue<ModalHost>>(0);
+				builder.SetKey(this);
+				builder.AddAttribute(1, nameof(CascadingValue<ModalHost>.IsFixed), true);
+				builder.AddAttribute(2, nameof(CascadingValue<ModalHost>.Value), this);
+				builder.AddAttribute(3, nameof(CascadingValue<ModalHost>.ChildContent),
+					new RenderFragment(builder =>
 					{
-						b.AddContent(3, ownChildContent);
-						RenderModals(4, b);
+						ImmutableArray<Modal> modals = VisibleModals;
+						// <fieldset>
+						{
+							builder.OpenElement(4, "fieldset");
+							if (VisibleModals.Any())
+								builder.AddAttribute(5, "disabled");
+							builder.AddContent(6, ownChildContent);
+							RenderDisabledModals(7, modals, builder);
+							builder.CloseElement();
+						}
+						// </fieldset>
+						if (VisibleModals.Any())
+							RenderModal(builder, modals[^1]);
 					}));
 				builder.CloseComponent();
 			}
 			// </CascadingValue>
 		}
 
-		private void RenderModals(int index, RenderTreeBuilder builder)
+		private void RenderDisabledModals(int index, ImmutableArray<Modal> modals, RenderTreeBuilder builder)
 		{
-			var modals = VisibleModals;
-			if (modals.Length == 0)
+			if (modals.Length <= 1)
 				return;
 
-			// <fieldset>
-			{
-				builder.OpenElement(index++, "fieldset");
-				builder.AddAttribute(index++, "disabled");
-				for (int i = 0; i < modals.Length - 1; i++)
-					RenderModal(index++, builder, modals[i]);
+			for (int i = 0; i < modals.Length - 1; i++)
+				RenderModal(builder, modals[i]);
 
-				// <div>
-				{
-					builder.OpenElement(index++, "div");
-					builder.AddAttribute(0, "class", "modal_screen-obscurer");
-					builder.CloseElement();
-				}
-				// </div>
+			// <div>
+			{
+				builder.OpenElement(index++, "div");
+				builder.AddAttribute(index++, "class", "modal_screen-obscurer");
 				builder.CloseElement();
 			}
-			// </fieldset>
-
-			RenderModal(index, builder, modals[^1]);
+			// </div>
 		}
 
-		private void RenderModal(int index, RenderTreeBuilder builder, Modal modal)
+		private void RenderModal(RenderTreeBuilder builder, Modal modal)
 		{
 			// <CascadingValue>
 			{
 				builder.OpenComponent<CascadingValue<Modal>>(0);
+				builder.SetKey(modal);
 				builder.AddAttribute(1, nameof(CascadingValue<Modal>.Value), modal);
 				builder.AddAttribute(2, nameof(CascadingValue<Modal>.IsFixed), true);
 				builder.AddAttribute(3, nameof(CascadingValue<Modal>.ChildContent),
 					new RenderFragment(b =>
 					{
 						// <div>
-						b.OpenElement(index++, "div");
 						{
+							b.OpenElement(4, "div");
 							b.SetKey(modal);
-							b.AddAttribute(index++, "class", $"modal_container {modal.CssClass}");
+							b.AddAttribute(5, "class", $"modal_container {modal.CssClass}");
 							// <LayoutView>
 							{
-								b.OpenComponent<LayoutView>(0);
-								b.AddAttribute(1, nameof(LayoutView.ChildContent), modal.ChildContent);
-								b.AddAttribute(2, nameof(LayoutView.Layout), modal.Layout ?? DefaultModalLayout);
+								b.OpenComponent<LayoutView>(6);
+								b.AddAttribute(7, nameof(LayoutView.ChildContent), modal.ChildContent);
+								b.AddAttribute(8, nameof(LayoutView.Layout), modal.Layout ?? DefaultModalLayout);
 								b.CloseComponent();
 							}
+							b.CloseElement();
 						}
-						b.CloseElement();
 						// </div>
 					}));
 				builder.CloseComponent();
