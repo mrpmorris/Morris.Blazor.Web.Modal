@@ -1,12 +1,12 @@
 ﻿@page "/"
 
 <PageTitle>Index</PageTitle>
-
+<h1>Modal demo</h1>
 <div>
     <button @onclick=@(() => ShowFirstModal = true)>Show first Modal</button>
 </div>
 
-<Modal Visible=@ShowFirstModal CssClass="wide tall" title="First modal">
+<Modal Visible=@ShowFirstModal CssClass="narrow tall" title="First modal">
     <button @onclick=@(() => ShowSecondModal = true)>Show second Modal</button>
     <button @onclick=@(() => ShowFirstModal = false)>Hide this Modal</button>
 </Modal>
