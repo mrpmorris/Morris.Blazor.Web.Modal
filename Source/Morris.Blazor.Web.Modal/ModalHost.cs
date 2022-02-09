@@ -18,7 +18,7 @@ namespace Morris.Blazor.Web.Modal
 		private Modal? PreviouslyVisibleModal;
 		private ImmutableArray<Modal> VisibleModals = Array.Empty<Modal>().ToImmutableArray();
 
-		public bool IsModalVisible { get; set;}
+		public bool IsModalVisible { get; set; }
 
 		internal void Show(Modal modal)
 		{
@@ -112,21 +112,15 @@ namespace Morris.Blazor.Web.Modal
 							builder.AddAttribute(6, "aria-modal", "true");
 							builder.AddAttribute(7, "role", "dialog");
 							builder.AddMultipleAttributes(8, modal.AdditionalAttributes);
-							// <main>
+							// <LayoutView>
 							{
-								builder.OpenElement(9, "main");
-								// <LayoutView>
-								{
-									builder.OpenComponent<LayoutView>(10);
-									builder.AddAttribute(11, nameof(LayoutView.ChildContent), modal.ChildContent);
-									builder.AddAttribute(12, nameof(LayoutView.Layout), modal.Layout ?? DefaultModalLayout);
-									builder.CloseComponent();
-								}
-								builder.CloseElement();
+								builder.OpenComponent<LayoutView>(9);
+								builder.AddAttribute(10, nameof(LayoutView.ChildContent), modal.ChildContent);
+								builder.AddAttribute(11, nameof(LayoutView.Layout), modal.Layout ?? DefaultModalLayout);
+								builder.CloseComponent();
 							}
-							// </main>
 							if (isActive && AutoFocusActiveModal)
-								builder.AddElementReferenceCapture(13, x => ActiveModalElementReference = x);
+								builder.AddElementReferenceCapture(12, x => ActiveModalElementReference = x);
 							builder.CloseElement();
 						}
 						// </div>
