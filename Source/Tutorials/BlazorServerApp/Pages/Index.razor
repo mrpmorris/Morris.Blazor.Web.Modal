@@ -7,19 +7,22 @@
 </div>
 
 <Modal Visible=@ShowFirstModal CssClass="narrow tall" title="First modal" aria-label="First modal">
-	<div class="container">
-		<h2>First modal</h2>
+	<main>
+		<div class="container">
+			<h2>First modal</h2>
 
-		<div class="form-group">
-			<label for="first-modal_name-input">Name</label>
-			<input tabindex=0 class="form-control" id="first-modal_name-input" aria-label="Enter your name" />
+			<div class="form-group">
+				<label for="first-modal_name-input">Name</label>
+				<input tabindex=0 class="form-control" id="first-modal_name-input" aria-label="Enter your name" />
+			</div>
+			<button type="button" @onclick=@(() => ShowSecondModal = true)>Show second Modal</button>
+			<button type="button" @onclick=@(() => ShowFirstModal = false)>Hide this Modal</button>
 		</div>
-		<button type="button" @onclick=@(() => ShowSecondModal = true)>Show second Modal</button>
-		<button type="button" @onclick=@(() => ShowFirstModal = false)>Hide this Modal</button>
-	</div>
+	</main>
 </Modal>
 
 <Modal Visible=@ShowSecondModal title="Second modal" aria-label="Second modal">
+	<main>
 		<div class="container">
 			<h2>Second modal</h2>
 
@@ -30,17 +33,20 @@
 			<button type="button" @onclick=@(() => ShowThirdModal = true)>Show third Modal</button>
 			<button type="button" @onclick=@(() => ShowSecondModal = false)>Hide this Modal</button>
 		</div>
+	</main>
 </Modal>
 
 <Modal Visible=@ShowThirdModal CssClass="narrow short" title="Third modal" aria-labelledby="third-modal_header">
-	<div class="container">
-		<h2 id="thid-modal_header">Third modal</h2>
-		<div class="form-group">
-			<label for="third-modal_telephone-input">Telephone</label>
-			<input tabindex=0 class="form-control" id="third-modal_telephone-input" aria-label="Enter your telephone number" type="tel" />
+	<main>
+		<div class="container">
+			<h2 id="thid-modal_header">Third modal</h2>
+			<div class="form-group">
+				<label for="third-modal_telephone-input">Telephone</label>
+				<input tabindex=0 class="form-control" id="third-modal_telephone-input" aria-label="Enter your telephone number" type="tel" />
+			</div>
+			<button type="button" @onclick=@(() => ShowThirdModal = false)>Hide this Modal</button>
 		</div>
-		<button type="button" @onclick=@(() => ShowThirdModal = false)>Hide this Modal</button>
-	</div>
+	</main>
 </Modal>
 
 @code
