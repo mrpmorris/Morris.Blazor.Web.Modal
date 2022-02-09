@@ -39,7 +39,7 @@ namespace Morris.Blazor.Web.Modal
 			{
 				PreviouslyVisibleModal = ActiveModal;
 				if (ActiveModal is not null)
-					await JSRuntime.InvokeVoidAsync("MorrisBlazorWeb.focusFirst", ActiveModalElementReference);
+					await JSRuntime.InvokeVoidAsync("MorrisBlazorWeb.focusFirstAvailableControl", ActiveModalElementReference);
 			}
 		}
 
@@ -112,15 +112,21 @@ namespace Morris.Blazor.Web.Modal
 							builder.AddAttribute(6, "aria-modal", "true");
 							builder.AddAttribute(7, "role", "dialog");
 							builder.AddMultipleAttributes(8, modal.AdditionalAttributes);
-							// <LayoutView>
+							// <main>
 							{
-								builder.OpenComponent<LayoutView>(9);
-								builder.AddAttribute(10, nameof(LayoutView.ChildContent), modal.ChildContent);
-								builder.AddAttribute(11, nameof(LayoutView.Layout), modal.Layout ?? DefaultModalLayout);
-								builder.CloseComponent();
+								builder.OpenElement(9, "main");
+								// <LayoutView>
+								{
+									builder.OpenComponent<LayoutView>(10);
+									builder.AddAttribute(11, nameof(LayoutView.ChildContent), modal.ChildContent);
+									builder.AddAttribute(12, nameof(LayoutView.Layout), modal.Layout ?? DefaultModalLayout);
+									builder.CloseComponent();
+								}
+								builder.CloseElement();
 							}
+							// </main>
 							if (isActive && AutoFocusActiveModal)
-								builder.AddElementReferenceCapture(12, x => ActiveModalElementReference = x);
+								builder.AddElementReferenceCapture(13, x => ActiveModalElementReference = x);
 							builder.CloseElement();
 						}
 						// </div>

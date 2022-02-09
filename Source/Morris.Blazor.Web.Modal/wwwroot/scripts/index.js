@@ -1,19 +1,21 @@
 var MorrisBlazorWeb = MorrisBlazorWeb || {};
 
-
 MorrisBlazorWeb.canFocus = function (element) {
-	if (element.tabIndex < 0 || element.disabled)
+	if (!(element.tabIndex >= 0) || element.disabled)
 		return false;
 
 	switch (element.nodeName) {
 		case 'A':
 			return element.rel != 'ignore';
+
 		case 'INPUT':
 			return element.type != 'hidden';
+
 		case 'BUTTON':
 		case 'SELECT':
 		case 'TEXTAREA':
 			return true;
+
 		default:
 			return false;
 	}
@@ -22,6 +24,7 @@ MorrisBlazorWeb.canFocus = function (element) {
 MorrisBlazorWeb.setFocus = function (element) {
 	if (!MorrisBlazorWeb.canFocus(element)) 
 		return false;
+
 	try {
 		element.focus();
 	} catch {
@@ -29,10 +32,13 @@ MorrisBlazorWeb.setFocus = function (element) {
 	return document.activeElement === element;
 };
 
-MorrisBlazorWeb.focusFirst = function (element) {
+MorrisBlazorWeb.focusFirstAvailableControl = function (element) {
+	if (MorrisBlazorWeb.setFocus(element))
+		return true;
+
 	for (var i = 0; i < element.childNodes.length; i++) {
 		var child = element.childNodes[i];
-		if (MorrisBlazorWeb.setFocus(child) || MorrisBlazorWeb.focusFirst(child))
+		if (MorrisBlazorWeb.focusFirstAvailableControl(child))
 			return true;
 	}
 	return false;
