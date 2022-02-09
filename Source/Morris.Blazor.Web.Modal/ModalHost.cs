@@ -1,18 +1,47 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
+using Microsoft.JSInterop;
 using System.Collections.Immutable;
 
 namespace Morris.Blazor.Web.Modal
 {
 	public class ModalHost : ComponentBase
 	{
+		[Parameter] public RenderFragment? ChildContent { get; set; }
+		[Parameter] public Type? DefaultModalLayout { get; set; }
+		[Parameter] public bool AutoFocusActiveModal { get; set; } = true;
+
+		[Inject] private IJSRuntime JSRuntime { get; set; } = null!;
+
+		private ElementReference ActiveModalElementReference;
+		private Modal? ActiveModal => !VisibleModals.Any() ? null : VisibleModals[^1];
+		private Modal? PreviouslyVisibleModal;
 		private ImmutableArray<Modal> VisibleModals = Array.Empty<Modal>().ToImmutableArray();
 
-		[Parameter]
-		public RenderFragment? ChildContent { get; set; }
+		public bool IsModalVisible { get; set;}
 
-		[Parameter]
-		public Type? DefaultModalLayout { get; set; }
+		internal void Show(Modal modal)
+		{
+			VisibleModals = VisibleModals.Add(modal);
+			StateHasChanged();
+		}
+
+		internal void Hide(Modal modal)
+		{
+			VisibleModals = VisibleModals.Remove(modal);
+			StateHasChanged();
+		}
+
+		protected override async Task OnAfterRenderAsync(bool firstRender)
+		{
+			await base.OnAfterRenderAsync(firstRender);
+			if (ActiveModal != PreviouslyVisibleModal)
+			{
+				PreviouslyVisibleModal = ActiveModal;
+				if (ActiveModal is not null)
+					await JSRuntime.InvokeVoidAsync("MorrisBlazorWeb.focusFirst", ActiveModalElementReference);
+			}
+		}
 
 		protected override void BuildRenderTree(RenderTreeBuilder builder)
 		{
@@ -47,7 +76,7 @@ namespace Morris.Blazor.Web.Modal
 								builder.CloseElement();
 							}
 							// </div>
-							RenderModal(builder, modals[^1]);
+							RenderModal(builder, modals[^1], isActive: true);
 						}
 					}));
 				builder.CloseComponent();
@@ -64,7 +93,7 @@ namespace Morris.Blazor.Web.Modal
 				RenderModal(builder, modals[i]);
 		}
 
-		private void RenderModal(RenderTreeBuilder builder, Modal modal)
+		private void RenderModal(RenderTreeBuilder builder, Modal modal, bool isActive = false)
 		{
 			// <CascadingValue>
 			{
@@ -73,39 +102,32 @@ namespace Morris.Blazor.Web.Modal
 				builder.AddAttribute(1, nameof(CascadingValue<Modal>.Value), modal);
 				builder.AddAttribute(2, nameof(CascadingValue<Modal>.IsFixed), true);
 				builder.AddAttribute(3, nameof(CascadingValue<Modal>.ChildContent),
-					new RenderFragment(b =>
+					new RenderFragment(builder =>
 					{
 						// <div>
 						{
-							b.OpenElement(4, "div");
-							b.SetKey(modal);
-							b.AddAttribute(5, "class", $"modal_container {modal.CssClass}");
+							builder.OpenElement(4, "div");
+							builder.SetKey(modal);
+							builder.AddAttribute(5, "class", $"modal_container {modal.CssClass}");
+							builder.AddAttribute(6, "aria-modal", "true");
+							builder.AddAttribute(7, "role", "dialog");
+							builder.AddMultipleAttributes(8, modal.AdditionalAttributes);
 							// <LayoutView>
 							{
-								b.OpenComponent<LayoutView>(6);
-								b.AddAttribute(7, nameof(LayoutView.ChildContent), modal.ChildContent);
-								b.AddAttribute(8, nameof(LayoutView.Layout), modal.Layout ?? DefaultModalLayout);
-								b.CloseComponent();
+								builder.OpenComponent<LayoutView>(9);
+								builder.AddAttribute(10, nameof(LayoutView.ChildContent), modal.ChildContent);
+								builder.AddAttribute(11, nameof(LayoutView.Layout), modal.Layout ?? DefaultModalLayout);
+								builder.CloseComponent();
 							}
-							b.CloseElement();
+							if (isActive && AutoFocusActiveModal)
+								builder.AddElementReferenceCapture(12, x => ActiveModalElementReference = x);
+							builder.CloseElement();
 						}
 						// </div>
 					}));
 				builder.CloseComponent();
 			}
 			// </CascadingValue>
-		}
-
-		internal void Show(Modal modal)
-		{
-			VisibleModals = VisibleModals.Add(modal);
-			StateHasChanged();
-		}
-
-		internal void Hide(Modal modal)
-		{
-			VisibleModals = VisibleModals.Remove(modal);
-			StateHasChanged();
 		}
 	}
 }
