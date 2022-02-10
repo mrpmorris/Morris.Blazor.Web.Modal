@@ -1,4 +1,9 @@
-﻿.modal_screen-obscurer {
+﻿#morris-blazor-web-modal_fieldset[disabled] {
+	cursor: not-allowed;
+	pointer-events: none;
+}
+
+.modal_screen-obscurer {
 	position: absolute;
 	top: 0;
 	left: 0;

@@ -22,7 +22,7 @@ MorrisBlazorWeb.canFocus = function (element) {
 }
 
 MorrisBlazorWeb.setFocus = function (element) {
-	if (!MorrisBlazorWeb.canFocus(element)) 
+	if (!MorrisBlazorWeb.canFocus(element))
 		return false;
 
 	try {
@@ -43,3 +43,40 @@ MorrisBlazorWeb.focusFirstAvailableControl = function (element) {
 	}
 	return false;
 };
+
+MorrisBlazorWeb.originalValueMarker = 'morris-blazor-web_original-value-';
+MorrisBlazorWeb.nullValueMarker = 'morris-blazor-web_null-value';
+MorrisBlazorWeb.disableControls = function (element, preserveCurrent) {
+	const preserve = function (element, attributeName, newValue) {
+		const originalValue = element.getAttribute(attributeName) || MorrisBlazorWeb.nullValueMarker;
+		const preservedAttributeName = MorrisBlazorWeb.originalValueMarker + attributeName;
+		if (element.getAttribute(preservedAttributeName) === null)
+			element.setAttribute(preservedAttributeName, originalValue);
+		element.setAttribute(attributeName, newValue);
+	}
+	if (preserveCurrent && element.getAttribute) {
+		preserve(element, "disabled", true);
+		preserve(element, "tabindex", -1);
+	}
+	for (var i = 0; i < element.childNodes.length; i++)
+		MorrisBlazorWeb.disableControls(element.childNodes[i], true);
+};
+
+MorrisBlazorWeb.restoreControls = function (element, restoreCurrent) {
+	const restore = function (element, attributeName, newValue) {
+		const preservedAttributeName = MorrisBlazorWeb.originalValueMarker + attributeName;
+		const preservedValue = element.getAttribute(preservedAttributeName) || MorrisBlazorWeb.nullValueMarker;
+		if (preservedValue === MorrisBlazorWeb.nullValueMarker)
+			element.removeAttribute(attributeName);
+		else
+			element.setAttribute(attributeName, preservedValue);
+		element.removeAttribute(preservedAttributeName);
+	}
+	if (restoreCurrent && element.getAttribute) {
+		restore(element, "disabled");
+		restore(element, "tabindex");
+	}
+	for (var i = 0; i < element.childNodes.length; i++)
+		MorrisBlazorWeb.restoreControls(element.childNodes[i], true);
+
+}
