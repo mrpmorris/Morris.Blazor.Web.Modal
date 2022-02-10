@@ -13,6 +13,7 @@ namespace Morris.Blazor.Web.Modal
 
 		[Inject] private IJSRuntime JSRuntime { get; set; } = null!;
 
+		private ElementReference FieldsetElementReference;
 		private ElementReference ActiveModalElementReference;
 		private Modal? ActiveModal => !VisibleModals.Any() ? null : VisibleModals[^1];
 		private Modal? PreviouslyVisibleModal;
@@ -32,17 +33,6 @@ namespace Morris.Blazor.Web.Modal
 			StateHasChanged();
 		}
 
-		protected override async Task OnAfterRenderAsync(bool firstRender)
-		{
-			await base.OnAfterRenderAsync(firstRender);
-			if (ActiveModal != PreviouslyVisibleModal)
-			{
-				PreviouslyVisibleModal = ActiveModal;
-				if (ActiveModal is not null)
-					await JSRuntime.InvokeVoidAsync("MorrisBlazorWeb.focusFirstAvailableControl", ActiveModalElementReference);
-			}
-		}
-
 		protected override void BuildRenderTree(RenderTreeBuilder builder)
 		{
 			RenderFragment? ownChildContent = ChildContent;
@@ -59,10 +49,12 @@ namespace Morris.Blazor.Web.Modal
 						// <fieldset>
 						{
 							builder.OpenElement(4, "fieldset");
+							builder.AddAttribute(5, "id", "morris-blazor-web-modal_fieldset");
 							if (VisibleModals.Any())
-								builder.AddAttribute(5, "disabled");
-							builder.AddContent(6, ownChildContent);
-							RenderDisabledModals(7, modals, builder);
+								builder.AddAttribute(6, "disabled");
+							builder.AddContent(7, ownChildContent);
+							builder.AddElementReferenceCapture(8, x => FieldsetElementReference = x);
+							RenderDisabledModals(9, modals, builder);
 							builder.CloseElement();
 						}
 						// </fieldset>
@@ -71,8 +63,8 @@ namespace Morris.Blazor.Web.Modal
 						{
 							// <div>
 							{
-								builder.OpenElement(8, "div");
-								builder.AddAttribute(9, "class", "modal_screen-obscurer");
+								builder.OpenElement(10, "div");
+								builder.AddAttribute(11, "class", "modal_screen-obscurer");
 								builder.CloseElement();
 							}
 							// </div>
@@ -82,6 +74,23 @@ namespace Morris.Blazor.Web.Modal
 				builder.CloseComponent();
 			}
 			// </CascadingValue>
+		}
+
+		protected override async Task OnAfterRenderAsync(bool firstRender)
+		{
+			await base.OnAfterRenderAsync(firstRender);
+			if (ActiveModal != PreviouslyVisibleModal)
+			{
+				PreviouslyVisibleModal = ActiveModal;
+				if (ActiveModal is null)
+					await JSRuntime.InvokeVoidAsync("MorrisBlazorWeb.restoreControls", FieldsetElementReference);
+				else
+				{
+					await JSRuntime.InvokeVoidAsync("MorrisBlazorWeb.disableControls", FieldsetElementReference);
+					await JSRuntime.InvokeVoidAsync("MorrisBlazorWeb.restoreControls", ActiveModalElementReference);
+					await JSRuntime.InvokeVoidAsync("MorrisBlazorWeb.focusFirstAvailableControl", ActiveModalElementReference);
+				}
+			}
 		}
 
 		private void RenderDisabledModals(int index, ImmutableArray<Modal> modals, RenderTreeBuilder builder)
