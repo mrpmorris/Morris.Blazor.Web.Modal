@@ -39,41 +39,37 @@ namespace Morris.Blazor.Web.Modal
 			// <CascadingValue>
 			{
 				builder.OpenComponent<CascadingValue<ModalHost>>(0);
-				builder.SetKey(this);
-				builder.AddAttribute(1, nameof(CascadingValue<ModalHost>.IsFixed), true);
-				builder.AddAttribute(2, nameof(CascadingValue<ModalHost>.Value), this);
-				builder.AddAttribute(3, nameof(CascadingValue<ModalHost>.ChildContent),
-					new RenderFragment(builder =>
-					{
-						ImmutableArray<Modal> modals = VisibleModals;
-						// <fieldset>
+				{
+					builder.SetKey(this);
+					builder.AddAttribute(1, nameof(CascadingValue<ModalHost>.IsFixed), true);
+					builder.AddAttribute(2, nameof(CascadingValue<ModalHost>.Value), this);
+					builder.AddAttribute(3, nameof(CascadingValue<ModalHost>.ChildContent),
+						new RenderFragment(builder =>
 						{
-							builder.OpenElement(4, "fieldset");
-							builder.AddAttribute(5, "id", "morris-blazor-web-modal_fieldset");
-							if (VisibleModals.Any())
-								builder.AddAttribute(6, "disabled");
-							builder.AddContent(7, ownChildContent);
-							builder.AddElementReferenceCapture(8, x => FieldsetElementReference = x);
-							RenderDisabledModals(9, modals, builder);
-							builder.CloseElement();
-						}
-						// </fieldset>
+							ImmutableArray<Modal> modals = VisibleModals;
 
-						if (VisibleModals.Any())
-						{
-							// <div>
+							builder.OpenElement(4, "fieldset");
 							{
-								builder.OpenElement(10, "div");
-								builder.AddAttribute(11, "class", "modal_screen-obscurer");
-								builder.CloseElement();
+								builder.AddAttribute(5, "id", "morris-blazor-web-modal_fieldset");
+								builder.AddContent(6, ownChildContent);
+								builder.AddElementReferenceCapture(7, x => FieldsetElementReference = x);
+								RenderDisabledModals(8, modals, builder);
 							}
-							// </div>
-							RenderModal(builder, modals[^1], isActive: true);
-						}
-					}));
-				builder.CloseComponent();
+							builder.CloseElement(); // fieldset
+
+							if (VisibleModals.Any())
+							{
+								builder.OpenElement(9, "div");
+								{
+									builder.AddAttribute(10, "class", "modal_screen-obscurer");
+								}
+								builder.CloseElement(); // div
+								RenderModal(builder, modals[^1], isActive: true);
+							}
+						}));
+				}
 			}
-			// </CascadingValue>
+			builder.CloseComponent(); // CascadingValue
 		}
 
 		protected override async Task OnAfterRenderAsync(bool firstRender)
