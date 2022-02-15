@@ -59,11 +59,6 @@ namespace Morris.Blazor.Web.Modal
 
 							if (VisibleModals.Any())
 							{
-								builder.OpenElement(9, "div");
-								{
-									builder.AddAttribute(10, "class", "modal_screen-obscurer");
-								}
-								builder.CloseElement(); // div
 								RenderModal(builder, modals[^1], isActive: true);
 							}
 						}));
@@ -91,11 +86,17 @@ namespace Morris.Blazor.Web.Modal
 
 		private void RenderDisabledModals(int index, ImmutableArray<Modal> modals, RenderTreeBuilder builder)
 		{
-			if (modals.Length <= 1)
-				return;
-
 			for (int i = 0; i < modals.Length - 1; i++)
 				RenderModal(builder, modals[i]);
+
+			if (VisibleModals.Any())
+			{
+				builder.OpenElement(9, "div");
+				{
+					builder.AddAttribute(10, "class", "modal_screen-obscurer");
+				}
+				builder.CloseElement(); // div
+			}
 		}
 
 		private void RenderModal(RenderTreeBuilder builder, Modal modal, bool isActive = false)
