@@ -100,39 +100,36 @@ namespace Morris.Blazor.Web.Modal
 
 		private void RenderModal(RenderTreeBuilder builder, Modal modal, bool isActive = false)
 		{
-			// <CascadingValue>
+			builder.OpenComponent<CascadingValue<Modal>>(0);
 			{
-				builder.OpenComponent<CascadingValue<Modal>>(0);
 				builder.SetKey(modal);
 				builder.AddAttribute(1, nameof(CascadingValue<Modal>.Value), modal);
 				builder.AddAttribute(2, nameof(CascadingValue<Modal>.IsFixed), true);
 				builder.AddAttribute(3, nameof(CascadingValue<Modal>.ChildContent),
 					new RenderFragment(builder =>
 					{
-						// <div>
+						builder.OpenElement(4, "div");
 						{
-							builder.OpenElement(4, "div");
 							builder.SetKey(modal);
 							builder.AddAttribute(5, "class", $"modal_container {modal.CssClass}");
 							builder.AddAttribute(6, "aria-modal", "true");
 							builder.AddAttribute(7, "role", "dialog");
 							builder.AddMultipleAttributes(8, modal.AdditionalAttributes);
-							// <LayoutView>
+
+							builder.OpenComponent<LayoutView>(9);
 							{
-								builder.OpenComponent<LayoutView>(9);
 								builder.AddAttribute(10, nameof(LayoutView.ChildContent), modal.ChildContent);
 								builder.AddAttribute(11, nameof(LayoutView.Layout), modal.Layout ?? DefaultModalLayout);
-								builder.CloseComponent();
 							}
+							builder.CloseComponent(); // LayoutView
+
 							if (isActive && AutoFocusActiveModal)
 								builder.AddElementReferenceCapture(12, x => ActiveModalElementReference = x);
-							builder.CloseElement();
 						}
-						// </div>
+						builder.CloseElement(); // div
 					}));
-				builder.CloseComponent();
 			}
-			// </CascadingValue>
+			builder.CloseComponent(); // CascadingValue
 		}
 	}
 }
