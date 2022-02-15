@@ -48,19 +48,17 @@ namespace Morris.Blazor.Web.Modal
 						{
 							ImmutableArray<Modal> modals = VisibleModals;
 
-							builder.OpenElement(4, "fieldset");
+							builder.OpenElement(0, "fieldset");
 							{
-								builder.AddAttribute(5, "id", "morris-blazor-web-modal_fieldset");
-								builder.AddContent(6, ownChildContent);
-								builder.AddElementReferenceCapture(7, x => FieldsetElementReference = x);
-								RenderDisabledModals(8, modals, builder);
+								builder.AddAttribute(1, "id", "morris-blazor-web-modal_fieldset");
+								builder.AddContent(2, ownChildContent);
+								builder.AddElementReferenceCapture(3, x => FieldsetElementReference = x);
+								RenderDisabledModals(4, modals, builder);
 							}
 							builder.CloseElement(); // fieldset
 
 							if (VisibleModals.Any())
-							{
 								RenderModal(builder, modals[^1], isActive: true);
-							}
 						}));
 				}
 			}
@@ -91,9 +89,9 @@ namespace Morris.Blazor.Web.Modal
 
 			if (VisibleModals.Any())
 			{
-				builder.OpenElement(9, "div");
+				builder.OpenElement(index++, "div");
 				{
-					builder.AddAttribute(10, "class", "modal_screen-obscurer");
+					builder.AddAttribute(index++, "class", "modal_screen-obscurer");
 				}
 				builder.CloseElement(); // div
 			}
