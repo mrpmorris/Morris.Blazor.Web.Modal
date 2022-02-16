@@ -44,6 +44,13 @@ MorrisBlazorWeb.focusFirstAvailableControl = function (element) {
 	return false;
 };
 
+MorrisBlazorWeb.focusFirstAvailableControlById = function (id) {
+	const element = document.getElementById(id);
+	if (!element)
+		return false;
+	return MorrisBlazorWeb.focusFirstAvailableControl(element);
+}
+
 MorrisBlazorWeb.originalValueMarker = 'morris-blazor-web_original-value-';
 MorrisBlazorWeb.nullValueMarker = 'morris-blazor-web_null-value';
 MorrisBlazorWeb.disableControls = function (element, preserveCurrent) {
@@ -62,6 +69,13 @@ MorrisBlazorWeb.disableControls = function (element, preserveCurrent) {
 		MorrisBlazorWeb.disableControls(element.childNodes[i], true);
 };
 
+MorrisBlazorWeb.disableControlsById = function (id) {
+	const element = document.getElementById(id);
+	if (!element)
+		return false;
+	return MorrisBlazorWeb.disableControls(element);
+}
+
 MorrisBlazorWeb.restoreControls = function (element, restoreCurrent) {
 	const restore = function (element, attributeName, newValue) {
 		const preservedAttributeName = MorrisBlazorWeb.originalValueMarker + attributeName;
@@ -78,5 +92,11 @@ MorrisBlazorWeb.restoreControls = function (element, restoreCurrent) {
 	}
 	for (var i = 0; i < element.childNodes.length; i++)
 		MorrisBlazorWeb.restoreControls(element.childNodes[i], true);
+}
 
+MorrisBlazorWeb.restoreControlsById = function (id) {
+	const element = document.getElementById(id);
+	if (!element)
+		return false;
+	return MorrisBlazorWeb.restoreControls(element);
 }

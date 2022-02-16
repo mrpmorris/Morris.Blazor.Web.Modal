@@ -13,9 +13,9 @@ namespace Morris.Blazor.Web.Modal
 
 		[Inject] private IJSRuntime JSRuntime { get; set; } = null!;
 
-		private ElementReference FieldsetElementReference;
-		private ElementReference ActiveModalElementReference;
 		private Modal? ActiveModal => !VisibleModals.Any() ? null : VisibleModals[^1];
+
+		private const string HolderElementId = "morris-blazor-web-modal_fieldset";
 		private Modal? PreviouslyVisibleModal;
 		private ImmutableArray<Modal> VisibleModals = Array.Empty<Modal>().ToImmutableArray();
 
@@ -50,15 +50,14 @@ namespace Morris.Blazor.Web.Modal
 
 							builder.OpenElement(0, "fieldset");
 							{
-								builder.AddAttribute(1, "id", "morris-blazor-web-modal_fieldset");
+								builder.AddAttribute(1, "id", HolderElementId);
 								builder.AddContent(2, ownChildContent);
-								builder.AddElementReferenceCapture(3, x => FieldsetElementReference = x);
-								RenderDisabledModals(4, modals, builder);
+								RenderDisabledModals(3, modals, builder);
+								if (VisibleModals.Any())
+									RenderModal(builder, modals[^1], isActive: true);
 							}
 							builder.CloseElement(); // fieldset
 
-							if (VisibleModals.Any())
-								RenderModal(builder, modals[^1], isActive: true);
 						}));
 				}
 			}
@@ -72,12 +71,12 @@ namespace Morris.Blazor.Web.Modal
 			{
 				PreviouslyVisibleModal = ActiveModal;
 				if (ActiveModal is null)
-					await JSRuntime.InvokeVoidAsync("MorrisBlazorWeb.restoreControls", FieldsetElementReference);
+					await JSRuntime.InvokeVoidAsync("MorrisBlazorWeb.restoreControlsById", HolderElementId);
 				else
 				{
-					await JSRuntime.InvokeVoidAsync("MorrisBlazorWeb.disableControls", FieldsetElementReference);
-					await JSRuntime.InvokeVoidAsync("MorrisBlazorWeb.restoreControls", ActiveModalElementReference);
-					await JSRuntime.InvokeVoidAsync("MorrisBlazorWeb.focusFirstAvailableControl", ActiveModalElementReference);
+					await JSRuntime.InvokeVoidAsync("MorrisBlazorWeb.disableControlsById", HolderElementId);
+					await JSRuntime.InvokeVoidAsync("MorrisBlazorWeb.restoreControlsById", ActiveModal.Id);
+					await JSRuntime.InvokeVoidAsync("MorrisBlazorWeb.focusFirstAvailableControlById", ActiveModal.Id);
 				}
 			}
 		}
@@ -99,6 +98,7 @@ namespace Morris.Blazor.Web.Modal
 
 		private void RenderModal(RenderTreeBuilder builder, Modal modal, bool isActive = false)
 		{
+			string modalIsActiveCssClass = isActive ? "modal-active" : "modal-inactive";
 			builder.OpenComponent<CascadingValue<Modal>>(0);
 			{
 				builder.SetKey(modal);
@@ -109,21 +109,19 @@ namespace Morris.Blazor.Web.Modal
 					{
 						builder.OpenElement(4, "div");
 						{
-							builder.SetKey(modal);
-							builder.AddAttribute(5, "class", $"modal_container {modal.CssClass}");
-							builder.AddAttribute(6, "aria-modal", "true");
-							builder.AddAttribute(7, "role", "dialog");
-							builder.AddMultipleAttributes(8, modal.AdditionalAttributes);
+							builder.SetKey(modal.Id);
+							builder.AddAttribute(5, "id", modal.Id);
+							builder.AddAttribute(6, "class", $"modal_container {modal.CssClass} {modalIsActiveCssClass}");
+							builder.AddAttribute(7, "aria-modal", "true");
+							builder.AddAttribute(8, "role", "dialog");
+							builder.AddMultipleAttributes(9, modal.AdditionalAttributes);
 
-							builder.OpenComponent<LayoutView>(9);
+							builder.OpenComponent<LayoutView>(10);
 							{
-								builder.AddAttribute(10, nameof(LayoutView.ChildContent), modal.ChildContent);
-								builder.AddAttribute(11, nameof(LayoutView.Layout), modal.Layout ?? DefaultModalLayout);
+								builder.AddAttribute(0, nameof(LayoutView.ChildContent), modal.ChildContent);
+								builder.AddAttribute(1, nameof(LayoutView.Layout), modal.Layout ?? DefaultModalLayout);
 							}
 							builder.CloseComponent(); // LayoutView
-
-							if (isActive && AutoFocusActiveModal)
-								builder.AddElementReferenceCapture(12, x => ActiveModalElementReference = x);
 						}
 						builder.CloseElement(); // div
 					}));

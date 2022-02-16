@@ -1,4 +1,4 @@
-﻿#morris-blazor-web-modal_fieldset[disabled] {
+﻿#morris-blazor-web-modal_modal-host[disabled] {
 	cursor: not-allowed;
 	pointer-events: none;
 }

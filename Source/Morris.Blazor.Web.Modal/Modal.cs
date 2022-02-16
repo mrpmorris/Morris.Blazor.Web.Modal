@@ -11,6 +11,9 @@ namespace Morris.Blazor.Web.Modal
 		[CascadingParameter] private ModalHost ModalHost { get; set; } = null!;
 		[Parameter(CaptureUnmatchedValues = true)] public Dictionary<string, object> AdditionalAttributes { get; set; } = new(StringComparer.InvariantCultureIgnoreCase);
 
+		private readonly string _id = $"Id_{Guid.NewGuid()}";
+		public string Id => _id;
+
 		public T? GetAttributeOrDefault<T>(string name)
 		{
 			ArgumentNullException.ThrowIfNull(name);
