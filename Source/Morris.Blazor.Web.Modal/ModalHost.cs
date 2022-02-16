@@ -15,7 +15,7 @@ namespace Morris.Blazor.Web.Modal
 
 		private Modal? ActiveModal => !VisibleModals.Any() ? null : VisibleModals[^1];
 
-		private const string HolderElementId = "morris-blazor-web-modal_fieldset";
+		private const string HolderElementId = "morris-blazor-web-modal_modal-holder";
 		private Modal? PreviouslyVisibleModal;
 		private ImmutableArray<Modal> VisibleModals = Array.Empty<Modal>().ToImmutableArray();
 
@@ -48,15 +48,17 @@ namespace Morris.Blazor.Web.Modal
 						{
 							ImmutableArray<Modal> modals = VisibleModals;
 
-							builder.OpenElement(0, "fieldset");
+							builder.OpenElement(0, "section");
 							{
 								builder.AddAttribute(1, "id", HolderElementId);
-								builder.AddContent(2, ownChildContent);
-								RenderDisabledModals(3, modals, builder);
+								if (ActiveModal is not null)
+									builder.AddAttribute(2, "disabled", true);
+								builder.AddContent(3, ownChildContent);
+								RenderDisabledModals(4, modals, builder);
 								if (VisibleModals.Any())
 									RenderModal(builder, modals[^1], isActive: true);
 							}
-							builder.CloseElement(); // fieldset
+							builder.CloseElement(); // section
 
 						}));
 				}

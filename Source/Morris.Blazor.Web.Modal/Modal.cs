@@ -4,6 +4,7 @@ namespace Morris.Blazor.Web.Modal
 {
 	public class Modal : ComponentBase, IDisposable
 	{
+		[Parameter] public bool DisableMainContentScrolling { get; set; }
 		[Parameter] public string? CssClass { get; set; }
 		[Parameter] public Type? Layout { get; set; }
 		[Parameter] public bool Visible { get; set; }
