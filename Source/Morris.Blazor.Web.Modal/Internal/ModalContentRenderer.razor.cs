@@ -2,7 +2,7 @@
 
 namespace Morris.Blazor.Web.Modal.Internal;
 
-public partial class ModalContainer : IDisposable
+public partial class ModalContentRenderer : IDisposable
 {
 	[Parameter] public bool IsActive { get; set; }
 	[Parameter] public Modal? Modal { get; set; }

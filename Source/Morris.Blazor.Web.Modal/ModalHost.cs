@@ -20,7 +20,7 @@ namespace Morris.Blazor.Web.Modal
 
 		private Modal? PreviouslyVisibleModal;
 		private ImmutableArray<Modal> VisibleModals = Array.Empty<Modal>().ToImmutableArray();
-		private Dictionary<Modal, ModalContainer> ModalToModalContainerLookup = new Dictionary<Modal, ModalContainer>();
+		private Dictionary<Modal, ModalContentRenderer> ModalToModalContainerLookup = new Dictionary<Modal, ModalContentRenderer>();
 
 		public bool IsModalVisible { get; set; }
 
@@ -32,7 +32,7 @@ namespace Morris.Blazor.Web.Modal
 
 		internal void ModalShouldRender(Modal modal)
 		{
-			if (!ModalToModalContainerLookup.TryGetValue(modal, out ModalContainer? container))
+			if (!ModalToModalContainerLookup.TryGetValue(modal, out ModalContentRenderer? container))
 				return;
 			container.NotifyStateHasChanged();
 		}
@@ -43,7 +43,7 @@ namespace Morris.Blazor.Web.Modal
 			StateHasChanged();
 		}
 
-		internal void RegisterContainerForModal(Modal modal, ModalContainer modalContainer)
+		internal void RegisterContainerForModal(Modal modal, ModalContentRenderer modalContainer)
 		{
 			ModalToModalContainerLookup[modal] = modalContainer;
 		}
@@ -128,11 +128,11 @@ namespace Morris.Blazor.Web.Modal
 				builder.AddAttribute(2, nameof(CascadingValue<Modal>.ChildContent),
 					new RenderFragment(builder =>
 					{
-						builder.OpenComponent<ModalContainer>(0);
+						builder.OpenComponent<ModalContentRenderer>(0);
 						{
 							builder.SetKey(modal.Id);
-							builder.AddAttribute(2, nameof(ModalContainer.IsActive), isActive);
-							builder.AddAttribute(3, nameof(ModalContainer.Modal), modal);
+							builder.AddAttribute(2, nameof(ModalContentRenderer.IsActive), isActive);
+							builder.AddAttribute(3, nameof(ModalContentRenderer.Modal), modal);
 						}
 						builder.CloseComponent(); // ModalContainer
 					}));
