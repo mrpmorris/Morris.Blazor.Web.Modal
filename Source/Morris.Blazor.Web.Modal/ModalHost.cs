@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.JSInterop;
 using System.Collections.Immutable;
+using Morris.Blazor.Web.Modal.Internal;
 
 namespace Morris.Blazor.Web.Modal
 {
@@ -16,8 +17,10 @@ namespace Morris.Blazor.Web.Modal
 		private Modal? ActiveModal => !VisibleModals.Any() ? null : VisibleModals[^1];
 
 		private const string HolderElementId = "morris-blazor-web-modal_modal-holder";
+
 		private Modal? PreviouslyVisibleModal;
 		private ImmutableArray<Modal> VisibleModals = Array.Empty<Modal>().ToImmutableArray();
+		private Dictionary<Modal, ModalContainer> ModalToModalContainerLookup = new Dictionary<Modal, ModalContainer>();
 
 		public bool IsModalVisible { get; set; }
 
@@ -27,10 +30,27 @@ namespace Morris.Blazor.Web.Modal
 			StateHasChanged();
 		}
 
+		internal void ModalShouldRender(Modal modal)
+		{
+			if (!ModalToModalContainerLookup.TryGetValue(modal, out ModalContainer? container))
+				return;
+			container.NotifyStateHasChanged();
+		}
+
 		internal void Hide(Modal modal)
 		{
 			VisibleModals = VisibleModals.Remove(modal);
 			StateHasChanged();
+		}
+
+		internal void RegisterContainerForModal(Modal modal, ModalContainer modalContainer)
+		{
+			ModalToModalContainerLookup[modal] = modalContainer;
+		}
+
+		internal void UnregisterContainerForModal(Modal modal)
+		{
+			ModalToModalContainerLookup.Remove(modal);
 		}
 
 		protected override void BuildRenderTree(RenderTreeBuilder builder)
@@ -59,7 +79,6 @@ namespace Morris.Blazor.Web.Modal
 									RenderModal(builder, modals[^1], isActive: true);
 							}
 							builder.CloseElement(); // section
-
 						}));
 				}
 			}
@@ -104,28 +123,18 @@ namespace Morris.Blazor.Web.Modal
 			builder.OpenComponent<CascadingValue<Modal>>(0);
 			{
 				builder.SetKey(modal);
-				builder.AddAttribute(1, nameof(CascadingValue<Modal>.Value), modal);
-				builder.AddAttribute(2, nameof(CascadingValue<Modal>.IsFixed), true);
-				builder.AddAttribute(3, nameof(CascadingValue<Modal>.ChildContent),
+				builder.AddAttribute(0, nameof(CascadingValue<Modal>.Value), modal);
+				builder.AddAttribute(1, nameof(CascadingValue<Modal>.IsFixed), true);
+				builder.AddAttribute(2, nameof(CascadingValue<Modal>.ChildContent),
 					new RenderFragment(builder =>
 					{
-						builder.OpenElement(4, "div");
+						builder.OpenComponent<ModalContainer>(0);
 						{
 							builder.SetKey(modal.Id);
-							builder.AddAttribute(5, "id", modal.Id);
-							builder.AddAttribute(6, "class", $"modal_container {modal.CssClass} {modalIsActiveCssClass}");
-							builder.AddAttribute(7, "aria-modal", "true");
-							builder.AddAttribute(8, "role", "dialog");
-							builder.AddMultipleAttributes(9, modal.AdditionalAttributes);
-
-							builder.OpenComponent<LayoutView>(10);
-							{
-								builder.AddAttribute(0, nameof(LayoutView.ChildContent), modal.ChildContent);
-								builder.AddAttribute(1, nameof(LayoutView.Layout), modal.Layout ?? DefaultModalLayout);
-							}
-							builder.CloseComponent(); // LayoutView
+							builder.AddAttribute(2, nameof(ModalContainer.IsActive), isActive);
+							builder.AddAttribute(3, nameof(ModalContainer.Modal), modal);
 						}
-						builder.CloseElement(); // div
+						builder.CloseComponent(); // ModalContainer
 					}));
 			}
 			builder.CloseComponent(); // CascadingValue

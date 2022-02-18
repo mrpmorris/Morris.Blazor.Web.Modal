@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
 
 namespace Morris.Blazor.Web.Modal
 {
@@ -18,6 +19,12 @@ namespace Morris.Blazor.Web.Modal
 		{
 			ArgumentNullException.ThrowIfNull(name);
 			return (T?)AdditionalAttributes.GetValueOrDefault(name);
+		}
+
+		protected override bool ShouldRender()
+		{
+			ModalHost.ModalShouldRender(this);
+			return false;
 		}
 
 		protected override void OnInitialized()
