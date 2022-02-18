@@ -20,6 +20,11 @@ namespace Morris.Blazor.Web.Modal
 			return (T?)AdditionalAttributes.GetValueOrDefault(name);
 		}
 
+		internal void NotifyStateHasChanged()
+		{
+			StateHasChanged();
+		}
+
 		protected override void OnInitialized()
 		{
 			if (ModalHost is null)

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.JSInterop;
 using System.Collections.Immutable;
+using Morris.Blazor.Web.Modal.Internal;
 
 namespace Morris.Blazor.Web.Modal
 {
@@ -109,23 +110,13 @@ namespace Morris.Blazor.Web.Modal
 				builder.AddAttribute(3, nameof(CascadingValue<Modal>.ChildContent),
 					new RenderFragment(builder =>
 					{
-						builder.OpenElement(4, "div");
+						builder.OpenComponent<ModalContainer>(4);
 						{
 							builder.SetKey(modal.Id);
-							builder.AddAttribute(5, "id", modal.Id);
-							builder.AddAttribute(6, "class", $"modal_container {modal.CssClass} {modalIsActiveCssClass}");
-							builder.AddAttribute(7, "aria-modal", "true");
-							builder.AddAttribute(8, "role", "dialog");
-							builder.AddMultipleAttributes(9, modal.AdditionalAttributes);
-
-							builder.OpenComponent<LayoutView>(10);
-							{
-								builder.AddAttribute(0, nameof(LayoutView.ChildContent), modal.ChildContent);
-								builder.AddAttribute(1, nameof(LayoutView.Layout), modal.Layout ?? DefaultModalLayout);
-							}
-							builder.CloseComponent(); // LayoutView
+							builder.AddAttribute(5, nameof(ModalContainer.IsActive), isActive);
+							builder.AddAttribute(6, nameof(ModalContainer.Modal), modal);
 						}
-						builder.CloseElement(); // div
+						builder.CloseComponent(); // ModalContainer
 					}));
 			}
 			builder.CloseComponent(); // CascadingValue

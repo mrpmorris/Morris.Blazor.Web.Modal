@@ -9,13 +9,14 @@
 <Modal Visible=@ShowFirstModal CssClass="narrow tall" title="First modal" aria-label="First modal">
 	<main>
 		<div class="container">
-			<h2>First modal</h2>
+			<h2>First modal @Counter</h2>
 			<SomeEmbeddedComponent/>
 
 			<div class="form-group">
 				<label for="first-modal_name-input">Name</label>
 				<input tabindex=0 class="form-control" id="first-modal_name-input" aria-label="Enter your name" />
 			</div>
+	<button type="button" @onclick=IncrementCounter>Counter++</button>
 			<button type="button" @onclick=@(() => ShowSecondModal = true)>Show second Modal</button>
 			<button type="button" @onclick=@(() => ShowFirstModal = false)>Hide this Modal</button>
 		</div>
@@ -55,4 +56,11 @@
 	bool ShowFirstModal;
 	bool ShowSecondModal;
 	bool ShowThirdModal;
+
+	private int Counter = 0;
+	private void IncrementCounter()
+	{
+		Counter++;
+		StateHasChanged();
+	}
 }
