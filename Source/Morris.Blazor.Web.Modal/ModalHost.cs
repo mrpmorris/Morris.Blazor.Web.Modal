@@ -20,7 +20,7 @@ namespace Morris.Blazor.Web.Modal
 
 		private Modal? PreviouslyVisibleModal;
 		private ImmutableArray<Modal> VisibleModals = Array.Empty<Modal>().ToImmutableArray();
-		private Dictionary<Modal, ModalContentRenderer> ModalToModalContainerLookup = new Dictionary<Modal, ModalContentRenderer>();
+		private Dictionary<Modal, ModalContentRenderer> ModalToModalContentRendererLookup = new Dictionary<Modal, ModalContentRenderer>();
 
 		public bool IsModalVisible { get; set; }
 
@@ -32,7 +32,7 @@ namespace Morris.Blazor.Web.Modal
 
 		internal void ModalShouldRender(Modal modal)
 		{
-			if (!ModalToModalContainerLookup.TryGetValue(modal, out ModalContentRenderer? container))
+			if (!ModalToModalContentRendererLookup.TryGetValue(modal, out ModalContentRenderer? container))
 				return;
 			container.NotifyStateHasChanged();
 		}
@@ -45,12 +45,12 @@ namespace Morris.Blazor.Web.Modal
 
 		internal void RegisterContainerForModal(Modal modal, ModalContentRenderer modalContainer)
 		{
-			ModalToModalContainerLookup[modal] = modalContainer;
+			ModalToModalContentRendererLookup[modal] = modalContainer;
 		}
 
 		internal void UnregisterContainerForModal(Modal modal)
 		{
-			ModalToModalContainerLookup.Remove(modal);
+			ModalToModalContentRendererLookup.Remove(modal);
 		}
 
 		protected override void BuildRenderTree(RenderTreeBuilder builder)
