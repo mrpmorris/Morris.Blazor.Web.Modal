@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
 
 namespace Morris.Blazor.Web.Modal
 {
@@ -20,9 +21,10 @@ namespace Morris.Blazor.Web.Modal
 			return (T?)AdditionalAttributes.GetValueOrDefault(name);
 		}
 
-		internal void NotifyStateHasChanged()
+		protected override bool ShouldRender()
 		{
-			StateHasChanged();
+			ModalHost.ModalShouldRender(this);
+			return false;
 		}
 
 		protected override void OnInitialized()

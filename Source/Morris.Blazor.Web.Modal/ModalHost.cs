@@ -17,8 +17,10 @@ namespace Morris.Blazor.Web.Modal
 		private Modal? ActiveModal => !VisibleModals.Any() ? null : VisibleModals[^1];
 
 		private const string HolderElementId = "morris-blazor-web-modal_modal-holder";
+
 		private Modal? PreviouslyVisibleModal;
 		private ImmutableArray<Modal> VisibleModals = Array.Empty<Modal>().ToImmutableArray();
+		private Dictionary<Modal, ModalContainer> ModalToModalContainerLookup = new Dictionary<Modal, ModalContainer>();
 
 		public bool IsModalVisible { get; set; }
 
@@ -28,10 +30,27 @@ namespace Morris.Blazor.Web.Modal
 			StateHasChanged();
 		}
 
+		internal void ModalShouldRender(Modal modal)
+		{
+			if (!ModalToModalContainerLookup.TryGetValue(modal, out ModalContainer? container))
+				return;
+			container.NotifyStateHasChanged();
+		}
+
 		internal void Hide(Modal modal)
 		{
 			VisibleModals = VisibleModals.Remove(modal);
 			StateHasChanged();
+		}
+
+		internal void RegisterContainerForModal(Modal modal, ModalContainer modalContainer)
+		{
+			ModalToModalContainerLookup[modal] = modalContainer;
+		}
+
+		internal void UnregisterContainerForModal(Modal modal)
+		{
+			ModalToModalContainerLookup.Remove(modal);
 		}
 
 		protected override void BuildRenderTree(RenderTreeBuilder builder)
@@ -60,7 +79,6 @@ namespace Morris.Blazor.Web.Modal
 									RenderModal(builder, modals[^1], isActive: true);
 							}
 							builder.CloseElement(); // section
-
 						}));
 				}
 			}
@@ -105,16 +123,16 @@ namespace Morris.Blazor.Web.Modal
 			builder.OpenComponent<CascadingValue<Modal>>(0);
 			{
 				builder.SetKey(modal);
-				builder.AddAttribute(1, nameof(CascadingValue<Modal>.Value), modal);
-				builder.AddAttribute(2, nameof(CascadingValue<Modal>.IsFixed), true);
-				builder.AddAttribute(3, nameof(CascadingValue<Modal>.ChildContent),
+				builder.AddAttribute(0, nameof(CascadingValue<Modal>.Value), modal);
+				builder.AddAttribute(1, nameof(CascadingValue<Modal>.IsFixed), true);
+				builder.AddAttribute(2, nameof(CascadingValue<Modal>.ChildContent),
 					new RenderFragment(builder =>
 					{
-						builder.OpenComponent<ModalContainer>(4);
+						builder.OpenComponent<ModalContainer>(0);
 						{
 							builder.SetKey(modal.Id);
-							builder.AddAttribute(5, nameof(ModalContainer.IsActive), isActive);
-							builder.AddAttribute(6, nameof(ModalContainer.Modal), modal);
+							builder.AddAttribute(2, nameof(ModalContainer.IsActive), isActive);
+							builder.AddAttribute(3, nameof(ModalContainer.Modal), modal);
 						}
 						builder.CloseComponent(); // ModalContainer
 					}));

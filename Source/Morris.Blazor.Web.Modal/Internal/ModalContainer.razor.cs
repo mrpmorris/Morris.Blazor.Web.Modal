@@ -2,24 +2,34 @@
 
 namespace Morris.Blazor.Web.Modal.Internal;
 
-public partial class ModalContainer
+public partial class ModalContainer : IDisposable
 {
 	[Parameter] public bool IsActive { get; set; }
 	[Parameter] public Modal? Modal { get; set; }
 	[Parameter] public RenderFragment? ChildContent { get; set; }
+	[CascadingParameter] public ModalHost? ModalHost { get; set; }
 
-	protected override void OnParametersSet()
+	void IDisposable.Dispose()
 	{
-		base.OnParametersSet();
-		if (Modal is null)
-			throw new ArgumentNullException(nameof(Modal));
+		if (Modal is not null)
+			ModalHost?.UnregisterContainerForModal(Modal);
 	}
 
-	protected override bool ShouldRender()
+	internal void NotifyStateHasChanged()
 	{
-		Modal?.NotifyStateHasChanged();
-		return base.ShouldRender();
+		StateHasChanged();
+	}
+
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+		if (ModalHost is null)
+			throw new ArgumentNullException(nameof(ModalHost));
+		if (Modal is null)
+			throw new ArgumentNullException(nameof(Modal));
+		ModalHost.RegisterContainerForModal(Modal, this);
 	}
 
 	private string ActiveStatusCss => IsActive ? "modal-active" : "modal-inactive";
+
 }
