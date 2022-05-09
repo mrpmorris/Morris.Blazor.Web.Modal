@@ -14,6 +14,7 @@ namespace Morris.Blazor.Web.Modal
 
 		private readonly string _id = $"Id_{Guid.NewGuid()}";
 		public string Id => _id;
+		private bool HasRendered;
 
 		public T? GetAttributeOrDefault<T>(string name)
 		{
@@ -39,10 +40,26 @@ namespace Morris.Blazor.Web.Modal
 		{
 			bool wasVisible = Visible;
 			await base.SetParametersAsync(parameters);
+			if (!HasRendered)
+				return;
 			if (!wasVisible && Visible)
 				Show();
 			if (wasVisible && !Visible)
 				Hide();
+		}
+
+		protected override async Task OnAfterRenderAsync(bool firstRender)
+		{
+			await base.OnAfterRenderAsync(firstRender);
+			if (!HasRendered)
+			{
+				HasRendered = true;
+				if (Visible)
+				{
+					await Task.Yield();
+					ModalHost.Show(this);
+				}
+			}
 		}
 
 		void IDisposable.Dispose()
