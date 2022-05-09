@@ -9,7 +9,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\Morris.Blazor.Web.Modal\Morris.Blazor.Web.Modal.csproj" />
+	  <ProjectReference Include="..\..\Lib\Morris.Blazor.Web.Modal\Morris.Blazor.Web.Modal.csproj" />
 	</ItemGroup>
 
 </Project>
