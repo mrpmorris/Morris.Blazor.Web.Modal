@@ -15,31 +15,9 @@
 
 .modal_container {
 	position: fixed;
-	top: 20vh;
-	left: 20vw;
-	width: 60vw;
-	height: 60vh;
-	background-color: white;
+	top: 50%;
+	left: 50vw;
+	transform: translateX(-50%) translateY(-50%);
 	overflow: auto;
 	z-index: 10000;
 }
-
-	.modal_container.narrow {
-		left: 30vw;
-		width: 40vw;
-	}
-
-	.modal_container.wide {
-		left: 10vw;
-		width: 80vw;
-	}
-
-	.modal_container.short {
-		top: 30vh;
-		height: 40vh;
-	}
-
-	.modal_container.tall {
-		top: 10vh;
-		height: 80vh;
-	}
