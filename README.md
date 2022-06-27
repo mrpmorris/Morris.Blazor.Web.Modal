@@ -4,6 +4,9 @@ Modal support or Blazor Web
 
 ## Releases
 
+### 1.8
+ * Fixed re-entrancy bug when closing a modal
+
 ### 1.7
  * Stopped relying on known dialog sizes for vertical/horizontal positioning
 
