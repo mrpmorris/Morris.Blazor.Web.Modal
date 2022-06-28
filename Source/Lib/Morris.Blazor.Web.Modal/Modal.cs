@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components.Rendering;
 
 namespace Morris.Blazor.Web.Modal
 {
-	public class Modal : ComponentBase, IDisposable
+	public class Modal : ComponentBase, IAsyncDisposable
 	{
 		[Parameter] public string? CssClass { get; set; }
 		[Parameter] public Type? Layout { get; set; }
@@ -43,9 +43,9 @@ namespace Morris.Blazor.Web.Modal
 			if (!HasRendered)
 				return;
 			if (!wasVisible && Visible)
-				Show();
+				await ShowAsync();
 			if (wasVisible && !Visible)
-				Hide();
+				await HideAsync();
 		}
 
 		protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -57,24 +57,24 @@ namespace Morris.Blazor.Web.Modal
 				if (Visible)
 				{
 					await Task.Yield();
-					ModalHost.Show(this);
+					await ModalHost.ShowAsync(this);
 				}
 			}
 		}
 
-		void IDisposable.Dispose()
+		private ValueTask ShowAsync()
 		{
-			ModalHost?.Hide(this);
+			return ModalHost.ShowAsync(this);
 		}
 
-		private void Show()
+		private ValueTask HideAsync()
 		{
-			ModalHost.Show(this);
+			return ModalHost.HideAsync(this);
 		}
 
-		private void Hide()
+		ValueTask IAsyncDisposable.DisposeAsync()
 		{
-			ModalHost.Hide(this);
+			return ModalHost.HideAsync(this);
 		}
 	}
 }

@@ -14,20 +14,28 @@ namespace Morris.Blazor.Web.Modal
 
 		[Inject] private IJSRuntime JSRuntime { get; set; } = null!;
 
+		private readonly SemaphoreSlim Lock = new SemaphoreSlim(1, 1);
 		private Modal? ActiveModal => !VisibleModals.Any() ? null : VisibleModals[^1];
 
 		private const string HolderElementId = "morris-blazor-web-modal_modal-holder";
 
-		private Task ActiveModalChangedTask = Task.CompletedTask;
 		private Modal? PreviouslyVisibleModal;
 		private ImmutableArray<Modal> VisibleModals = Array.Empty<Modal>().ToImmutableArray();
 		private Dictionary<Modal, ModalContentRenderer> ModalToModalContentRendererLookup = new Dictionary<Modal, ModalContentRenderer>();
 
 		public bool IsModalVisible { get; set; }
 
-		internal void Show(Modal modal)
+		internal async ValueTask ShowAsync(Modal modal)
 		{
-			VisibleModals = VisibleModals.Add(modal);
+			await Lock.WaitAsync();
+			try
+			{
+				VisibleModals = VisibleModals.Add(modal);
+			}
+			finally
+			{
+				Lock.Release();
+			}
 			StateHasChanged();
 		}
 
@@ -38,9 +46,17 @@ namespace Morris.Blazor.Web.Modal
 			container.NotifyStateHasChanged();
 		}
 
-		internal void Hide(Modal modal)
+		internal async ValueTask HideAsync(Modal modal)
 		{
-			VisibleModals = VisibleModals.Remove(modal);
+			await Lock.WaitAsync();
+			try
+			{
+				VisibleModals = VisibleModals.Remove(modal);
+			}
+			finally
+			{
+				Lock.Release();
+			}
 			StateHasChanged();
 		}
 
@@ -89,28 +105,25 @@ namespace Morris.Blazor.Web.Modal
 		protected override async Task OnAfterRenderAsync(bool firstRender)
 		{
 			await base.OnAfterRenderAsync(firstRender);
-			var activeModal = ActiveModal;
-			if (activeModal != PreviouslyVisibleModal)
+			await Lock.WaitAsync();
+			try
 			{
-				Task task = null!;
-				PreviouslyVisibleModal = ActiveModal;
-				if (activeModal is null)
+				if (ActiveModal != PreviouslyVisibleModal)
 				{
-					task = JSRuntime.InvokeVoidAsync(
-						"MorrisBlazorWeb.restoreControlsById",
-						HolderElementId).AsTask();
-				}
-				else
-				{
-					task = Task.Factory.StartNew(async () =>
+					PreviouslyVisibleModal = ActiveModal;
+					if (ActiveModal is null)
+						await JSRuntime.InvokeVoidAsync("MorrisBlazorWeb.restoreControlsById", HolderElementId);
+					else
 					{
 						await JSRuntime.InvokeVoidAsync("MorrisBlazorWeb.disableControlsById", HolderElementId);
-						await JSRuntime.InvokeVoidAsync("MorrisBlazorWeb.restoreControlsById", activeModal.Id);
-						await JSRuntime.InvokeVoidAsync("MorrisBlazorWeb.focusFirstAvailableControlById", activeModal.Id);
-					});
+						await JSRuntime.InvokeVoidAsync("MorrisBlazorWeb.restoreControlsById", ActiveModal.Id);
+						await JSRuntime.InvokeVoidAsync("MorrisBlazorWeb.focusFirstAvailableControlById", ActiveModal.Id);
+					}
 				}
-				ActiveModalChangedTask = ActiveModalChangedTask.ContinueWith(_ => task).Unwrap();
-				await ActiveModalChangedTask;
+			}
+			finally
+			{
+				Lock.Release();
 			}
 		}
 
