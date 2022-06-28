@@ -18,7 +18,19 @@ Modal support or Blazor Web
  * Ensure underlying elements are disabled if Modal is rendered visible by default
 
 ### 1.5
- * Control events are not triggering re-render in modal ([#7](https://github.com/mrpmorris/Morris.Blazor.Web.Modal/issues/7))
+ * Ensure events trigger re-render in modal ([#7](https://github.com/mrpmorris/Morris.Blazor.Web.Modal/issues/7))
 
 ### 1.4
- * Existing modal controls are being recreated when secondary modals are opened/closed ([#4](https://github.com/mrpmorris/Morris.Blazor.Web.Modal/issues/4))
+ * Ensure modals are not destroyed / recreated when secondary modals are displayed on top of them ([#4](https://github.com/mrpmorris/Morris.Blazor.Web.Modal/issues/4))
+
+### 1.3.2
+ * Use JavaScript to disable obscured controls
+
+### 1.2
+ * Ensure screen obscurer covers all disabled controls so screen readers do not read them out
+
+### 1.1
+ * Ensure all content other than the active modal is disabled when a modal is visible
+
+### 1.0
+ * Initial release
