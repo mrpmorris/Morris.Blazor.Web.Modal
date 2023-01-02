@@ -4,6 +4,10 @@ Modal support or Blazor Web
 
 ## Releases
 
+### 2.0
+- Support .NET 7
+- Remove frameworks no longer supported by Microsoft
+
 ### 1.9
  * Fixed bug where some controls wouldn't re-enable when multiple modals were closed at the same time ([#13](https://github.com/mrpmorris/Morris.Blazor.Web.Modal/issues/13))
 
