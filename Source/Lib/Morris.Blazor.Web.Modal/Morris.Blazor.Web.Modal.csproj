@@ -1,9 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
 	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
-		<Nullable>enable</Nullable>
-		<ImplicitUsings>enable</ImplicitUsings>
 		<AssemblyOriginatorKeyFile>..\MrPMorris.snk</AssemblyOriginatorKeyFile>
 		<IsPackable>true</IsPackable>
 		<PackageId>Morris.Blazor.Web.Modal</PackageId>
@@ -15,7 +12,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.0"  Condition="'$(TargetFramework)' == 'net7.0'" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.0"  Condition="'$(TargetFramework)' == 'net6.0'" />
 	</ItemGroup>
 
 </Project>
