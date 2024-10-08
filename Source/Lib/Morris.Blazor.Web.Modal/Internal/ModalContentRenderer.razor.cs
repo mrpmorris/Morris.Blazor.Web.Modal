@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace Morris.Blazor.Web.Modal.Internal;
 
@@ -31,5 +32,14 @@ public partial class ModalContentRenderer : IDisposable
 	}
 
 	private string ActiveStatusCss => IsActive ? "modal-active" : "modal-inactive";
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		await base.OnAfterRenderAsync(firstRender);
+		if (firstRender)
+		{
+			await JSRuntime.InvokeVoidAsync("MorrisBlazorWeb.showModal", Modal!.Id);
+		}
+	}
 
 }

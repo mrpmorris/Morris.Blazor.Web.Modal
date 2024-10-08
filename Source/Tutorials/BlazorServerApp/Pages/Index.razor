@@ -14,7 +14,7 @@
 
 			<div class="form-group">
 				<label for="first-modal_name-input">Name</label>
-				<input tabindex=0 class="form-control" id="first-modal_name-input" aria-label="Enter your name" />
+				<input tabindex=0 class="form-control" id="first-modal_name-input" aria-label="Enter your name" autocomplete="off" />
 			</div>
 			<button type="button" @onclick=@(() => ShowSecondModal = true)>Show second Modal</button>
 			<button type="button" @onclick=@(() => ShowFirstModal = false)>Hide this Modal</button>
@@ -29,7 +29,7 @@
 
 			<div class="form-group">
 				<label for="second-modal_email-input">Email</label>
-				<input tabindex=0 class="form-control" id="second-modal_email-input" aria-label="Enter your email" type="email" />
+				<input tabindex=0 class="form-control" id="second-modal_email-input" aria-label="Enter your email" type="email" autocomplete="off" />
 			</div>
 			<button type="button" @onclick=@(() => ShowThirdModal = true)>Show third Modal</button>
 			<button type="button" @onclick=@(() => ShowSecondModal = false)>Hide this Modal</button>
@@ -43,7 +43,7 @@
 			<h2 id="thid-modal_header">Third modal</h2>
 			<div class="form-group">
 				<label for="third-modal_telephone-input">Telephone</label>
-				<input tabindex=0 class="form-control" id="third-modal_telephone-input" aria-label="Enter your telephone number" type="tel" />
+				<input tabindex=0 class="form-control" id="third-modal_telephone-input" aria-label="Enter your telephone number" type="tel" autocomplete="off" />
 			</div>
 			<button type="button" @onclick=@(() => ShowThirdModal = false)>Hide this Modal</button>
 		</div>

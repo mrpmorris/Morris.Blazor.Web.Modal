@@ -111,14 +111,8 @@ namespace Morris.Blazor.Web.Modal
 				if (ActiveModal != PreviouslyVisibleModal)
 				{
 					PreviouslyVisibleModal = ActiveModal;
-					if (ActiveModal is null)
-						await JSRuntime.InvokeVoidAsync("MorrisBlazorWeb.restoreControlsById", HolderElementId);
-					else
-					{
-						await JSRuntime.InvokeVoidAsync("MorrisBlazorWeb.disableControlsById", HolderElementId);
-						await JSRuntime.InvokeVoidAsync("MorrisBlazorWeb.restoreControlsById", ActiveModal.Id);
+					if (ActiveModal is not null)
 						await JSRuntime.InvokeVoidAsync("MorrisBlazorWeb.focusFirstAvailableControlById", ActiveModal.Id);
-					}
 				}
 			}
 			finally
