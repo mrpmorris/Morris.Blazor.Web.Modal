@@ -4,6 +4,10 @@ Modal support or Blazor Web
 
 ## Releases
 
+### 3.0
+- Support .NET 8
+- Use `<dialog>` element to revent keyboard navigation to controls outside of modal
+
 ### 2.0
 - Support .NET 7
 - Remove frameworks no longer supported by Microsoft
