@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
-using Microsoft.JSInterop;
 using System.Collections.Immutable;
 using Morris.Blazor.Web.Modal.Internal;
+using Microsoft.JSInterop;
 
 namespace Morris.Blazor.Web.Modal
 {
@@ -111,14 +111,8 @@ namespace Morris.Blazor.Web.Modal
 				if (ActiveModal != PreviouslyVisibleModal)
 				{
 					PreviouslyVisibleModal = ActiveModal;
-					if (ActiveModal is null)
-						await JSRuntime.InvokeVoidAsync("MorrisBlazorWeb.restoreControlsById", HolderElementId);
-					else
-					{
-						await JSRuntime.InvokeVoidAsync("MorrisBlazorWeb.disableControlsById", HolderElementId);
-						await JSRuntime.InvokeVoidAsync("MorrisBlazorWeb.restoreControlsById", ActiveModal.Id);
+					if (ActiveModal is not null)
 						await JSRuntime.InvokeVoidAsync("MorrisBlazorWeb.focusFirstAvailableControlById", ActiveModal.Id);
-					}
 				}
 			}
 			finally

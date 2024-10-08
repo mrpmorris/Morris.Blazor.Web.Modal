@@ -14,10 +14,5 @@
 }
 
 .modal_container {
-	position: fixed;
-	top: 50%;
-	left: 50vw;
-	transform: translateX(-50%) translateY(-50%);
-	overflow: auto;
 	z-index: 10000;
 }
