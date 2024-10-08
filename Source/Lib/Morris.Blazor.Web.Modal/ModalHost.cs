@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
-using Microsoft.JSInterop;
 using System.Collections.Immutable;
 using Morris.Blazor.Web.Modal.Internal;
+using Microsoft.JSInterop;
 
 namespace Morris.Blazor.Web.Modal
 {

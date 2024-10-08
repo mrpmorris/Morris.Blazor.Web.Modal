@@ -1,7 +1,6 @@
-<Project Sdk="Microsoft.NET.Sdk.Razor">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
 	<PropertyGroup>
-		<AssemblyOriginatorKeyFile>..\MrPMorris.snk</AssemblyOriginatorKeyFile>
 		<IsPackable>true</IsPackable>
 		<PackageId>Morris.Blazor.Web.Modal</PackageId>
 	</PropertyGroup>
@@ -12,8 +11,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.0"  Condition="'$(TargetFramework)' == 'net7.0'" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.0"  Condition="'$(TargetFramework)' == 'net6.0'" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.*"  Condition="'$(TargetFramework)' == 'net8.0'" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.*"  Condition="'$(TargetFramework)' == 'net7.0'" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.*"  Condition="'$(TargetFramework)' == 'net6.0'" />
 	</ItemGroup>
 
 </Project>
