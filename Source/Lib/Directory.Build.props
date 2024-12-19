@@ -1,16 +1,12 @@
 <Project>
 	<PropertyGroup>
-		<Version>3.0.2</Version>
-		<AssemblyVersion>3.0.2</AssemblyVersion>
-		<FileVersion>3.0.2</FileVersion>
-
 		<Authors>Peter Morris</Authors>
 		<Company />
 		<Copyright>Peter Morris</Copyright>
 		<PackageLicenseFile></PackageLicenseFile>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 
-		<TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
+		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 
@@ -19,13 +15,6 @@
 		<RepositoryUrl>https://github.com/mrpmorris/Morris.Blazor.Web.Modal</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)'=='Release'">
-		<AssemblyOriginatorKeyFile>$(SolutionDir)MrPMorris.snk</AssemblyOriginatorKeyFile>
-		<SignAssembly>true</SignAssembly>
-		<DelaySign>false</DelaySign>
-		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	</PropertyGroup>
 
 	<PropertyGroup>
