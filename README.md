@@ -4,6 +4,9 @@ Modal support or Blazor Web
 
 ## Releases
 
+### 3.2
+- Support .NET 8, 9, and 10.
+
 ### 3.1
 - Support .NET 8 and 9 only.
 
